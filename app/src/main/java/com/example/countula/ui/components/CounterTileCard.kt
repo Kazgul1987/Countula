@@ -14,6 +14,7 @@ import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -21,7 +22,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.countula.data.CounterTile
 import com.example.countula.ui.CurrencyFormatter
@@ -37,10 +40,19 @@ fun CounterTileCard(
     onMoveUp: () -> Unit,
     onMoveDown: () -> Unit
 ) {
+    val tileColor = Color(tile.colorHex)
+    val contentColor = if (tileColor.luminance() < 0.45f) Color.White else Color(0xFF1C1C1C)
+    val titleText = tile.title.ifBlank { "Kachel" }
+    val subtotal = CurrencyFormatter.formatEuroFromCents(tile.counter * tile.priceInCents)
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick)
+            .clickable(onClick = onClick),
+        colors = CardDefaults.cardColors(
+            containerColor = tileColor,
+            contentColor = contentColor
+        )
     ) {
         Column(
             modifier = Modifier
@@ -50,22 +62,30 @@ fun CounterTileCard(
             Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = tile.title,
-                        style = MaterialTheme.typography.titleMedium,
+                        text = titleText,
+                        style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold,
-                        color = Color(tile.colorHex)
+                        color = contentColor
                     )
                     Text(
                         text = "Preis: ${CurrencyFormatter.formatEuroFromCents(tile.priceInCents)}",
-                        style = MaterialTheme.typography.bodyMedium
+                        style = MaterialTheme.typography.bodyLarge
                     )
                 }
                 Spacer(modifier = Modifier.size(8.dp))
                 IconButton(onClick = onEdit) {
-                    Icon(imageVector = Icons.Default.Edit, contentDescription = "Bearbeiten")
+                    Icon(
+                        imageVector = Icons.Default.Edit,
+                        contentDescription = "Bearbeiten",
+                        tint = contentColor
+                    )
                 }
                 IconButton(onClick = onDelete) {
-                    Icon(imageVector = Icons.Default.Delete, contentDescription = "Löschen")
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = "Löschen",
+                        tint = contentColor
+                    )
                 }
             }
 
@@ -75,21 +95,31 @@ fun CounterTileCard(
             ) {
                 Text(
                     text = "Counter: ${tile.counter}",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.SemiBold
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = "Zwischensumme: ${CurrencyFormatter.formatEuroFromCents(tile.counter * tile.priceInCents)}",
-                    style = MaterialTheme.typography.bodyMedium
+                    text = subtotal,
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.End
                 )
             }
 
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
                 IconButton(onClick = onMoveUp, enabled = canMoveUp) {
-                    Icon(Icons.Default.ArrowUpward, contentDescription = "Nach oben")
+                    Icon(
+                        Icons.Default.ArrowUpward,
+                        contentDescription = "Nach oben",
+                        tint = contentColor
+                    )
                 }
                 IconButton(onClick = onMoveDown, enabled = canMoveDown) {
-                    Icon(Icons.Default.ArrowDownward, contentDescription = "Nach unten")
+                    Icon(
+                        Icons.Default.ArrowDownward,
+                        contentDescription = "Nach unten",
+                        tint = contentColor
+                    )
                 }
             }
         }
