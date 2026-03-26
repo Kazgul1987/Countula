@@ -72,7 +72,7 @@ fun CounterTileCard(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(12.dp),
+                .padding(14.dp),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             Row(
@@ -86,7 +86,7 @@ fun CounterTileCard(
                     Text(
                         text = titleText,
                         style = MaterialTheme.typography.titleMedium,
-                        fontSize = 20.sp,
+                        fontSize = 21.sp,
                         fontWeight = FontWeight.SemiBold,
                         color = contentColor,
                         maxLines = 2,
