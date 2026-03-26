@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -50,6 +51,7 @@ fun CounterTileCard(
     Card(
         modifier = Modifier
             .fillMaxWidth()
+            .aspectRatio(1f)
             .clickable(onClick = onClick),
         colors = CardDefaults.cardColors(
             containerColor = tileColor,
@@ -59,25 +61,28 @@ fun CounterTileCard(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
+                .padding(12.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Box(modifier = Modifier.fillMaxWidth()) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(end = 96.dp)
+                        .padding(end = 88.dp)
                 ) {
                     Text(
                         text = titleText,
-                        style = MaterialTheme.typography.headlineSmall,
+                        style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = contentColor,
-                        maxLines = 2,
+                        maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
                     Text(
                         text = "Preis: ${CurrencyFormatter.formatEuroFromCents(tile.priceInCents)}",
-                        style = MaterialTheme.typography.bodyLarge
+                        style = MaterialTheme.typography.bodyMedium,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
                 }
                 Row(modifier = Modifier.align(Alignment.TopEnd)) {
@@ -95,6 +100,20 @@ fun CounterTileCard(
                             tint = contentColor
                         )
                     }
+                    IconButton(onClick = onMoveUp, enabled = canMoveUp) {
+                        Icon(
+                            Icons.Default.ArrowUpward,
+                            contentDescription = "Nach oben",
+                            tint = contentColor
+                        )
+                    }
+                    IconButton(onClick = onMoveDown, enabled = canMoveDown) {
+                        Icon(
+                            Icons.Default.ArrowDownward,
+                            contentDescription = "Nach unten",
+                            tint = contentColor
+                        )
+                    }
                 }
             }
 
@@ -104,32 +123,15 @@ fun CounterTileCard(
             ) {
                 Text(
                     text = "Counter: ${tile.counter}",
-                    style = MaterialTheme.typography.titleLarge,
+                    style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
                     text = subtotal,
-                    style = MaterialTheme.typography.titleLarge,
+                    style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.End
                 )
-            }
-
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-                IconButton(onClick = onMoveUp, enabled = canMoveUp) {
-                    Icon(
-                        Icons.Default.ArrowUpward,
-                        contentDescription = "Nach oben",
-                        tint = contentColor
-                    )
-                }
-                IconButton(onClick = onMoveDown, enabled = canMoveDown) {
-                    Icon(
-                        Icons.Default.ArrowDownward,
-                        contentDescription = "Nach unten",
-                        tint = contentColor
-                    )
-                }
             }
         }
     }
