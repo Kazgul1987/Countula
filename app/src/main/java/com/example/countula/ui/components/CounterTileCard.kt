@@ -28,6 +28,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.countula.data.CounterTile
 import com.example.countula.ui.CurrencyFormatter
+import com.example.countula.ui.colorFromStoredArgb
 
 @Composable
 fun CounterTileCard(
@@ -40,7 +41,7 @@ fun CounterTileCard(
     onMoveUp: () -> Unit,
     onMoveDown: () -> Unit
 ) {
-    val tileColor = Color(tile.colorHex)
+    val tileColor = colorFromStoredArgb(tile.colorHex)
     val contentColor = if (tileColor.luminance() < 0.45f) Color.White else Color(0xFF1C1C1C)
     val titleText = tile.title.ifBlank { "Kachel" }
     val subtotal = CurrencyFormatter.formatEuroFromCents(tile.counter * tile.priceInCents)
