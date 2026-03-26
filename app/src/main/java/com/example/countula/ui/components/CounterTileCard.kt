@@ -3,24 +3,31 @@ package com.example.countula.ui.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDownward
 import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -28,6 +35,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.countula.data.CounterTile
 import com.example.countula.ui.CurrencyFormatter
 import com.example.countula.ui.colorFromStoredArgb
@@ -49,6 +57,7 @@ fun CounterTileCard(
     val contentColor = chooseBestContrastColor(tileColor)
     val titleText = tile.title.ifBlank { "Kachel" }
     val subtotal = CurrencyFormatter.formatEuroFromCents(tile.counter * tile.priceInCents)
+    var overflowExpanded by remember { mutableStateOf(false) }
 
     Card(
         modifier = Modifier
@@ -66,55 +75,89 @@ fun CounterTileCard(
                 .padding(12.dp),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            Box(modifier = Modifier.fillMaxWidth()) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
                 Column(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(end = 88.dp)
+                        .weight(1f)
                 ) {
                     Text(
                         text = titleText,
-                        style = MaterialTheme.typography.titleSmall,
+                        style = MaterialTheme.typography.titleMedium,
+                        fontSize = 20.sp,
                         fontWeight = FontWeight.SemiBold,
                         color = contentColor,
-                        maxLines = 1,
+                        maxLines = 2,
                         overflow = TextOverflow.Ellipsis
                     )
                     Text(
                         text = "Preis: ${CurrencyFormatter.formatEuroFromCents(tile.priceInCents)}",
-                        style = MaterialTheme.typography.bodyMedium,
+                        style = MaterialTheme.typography.bodySmall,
                         color = contentColor,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
                 }
-                Row(modifier = Modifier.align(Alignment.TopEnd)) {
-                    IconButton(onClick = onEdit) {
+
+                Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
+                    IconButton(onClick = onEdit, modifier = Modifier.size(36.dp)) {
                         Icon(
                             imageVector = Icons.Default.Edit,
                             contentDescription = "Bearbeiten",
                             tint = contentColor
                         )
                     }
-                    IconButton(onClick = onDelete) {
+                    IconButton(onClick = onDelete, modifier = Modifier.size(36.dp)) {
                         Icon(
                             imageVector = Icons.Default.Delete,
                             contentDescription = "Löschen",
                             tint = contentColor
                         )
                     }
-                    IconButton(onClick = onMoveUp, enabled = canMoveUp) {
+                    IconButton(
+                        onClick = { overflowExpanded = true },
+                        modifier = Modifier.size(36.dp)
+                    ) {
                         Icon(
-                            Icons.Default.ArrowUpward,
-                            contentDescription = "Nach oben",
+                            imageVector = Icons.Default.MoreVert,
+                            contentDescription = "Mehr Aktionen",
                             tint = contentColor
                         )
                     }
-                    IconButton(onClick = onMoveDown, enabled = canMoveDown) {
-                        Icon(
-                            Icons.Default.ArrowDownward,
-                            contentDescription = "Nach unten",
-                            tint = contentColor
+
+                    DropdownMenu(
+                        expanded = overflowExpanded,
+                        onDismissRequest = { overflowExpanded = false }
+                    ) {
+                        DropdownMenuItem(
+                            text = { Text("Nach oben") },
+                            onClick = {
+                                overflowExpanded = false
+                                onMoveUp()
+                            },
+                            enabled = canMoveUp,
+                            leadingIcon = {
+                                Icon(
+                                    imageVector = Icons.Default.ArrowUpward,
+                                    contentDescription = null
+                                )
+                            }
+                        )
+                        DropdownMenuItem(
+                            text = { Text("Nach unten") },
+                            onClick = {
+                                overflowExpanded = false
+                                onMoveDown()
+                            },
+                            enabled = canMoveDown,
+                            leadingIcon = {
+                                Icon(
+                                    imageVector = Icons.Default.ArrowDownward,
+                                    contentDescription = null
+                                )
+                            }
                         )
                     }
                 }
