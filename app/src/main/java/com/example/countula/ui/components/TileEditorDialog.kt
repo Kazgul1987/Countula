@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -25,7 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.input.KeyboardOptions
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.example.countula.data.CounterTile
@@ -39,7 +40,7 @@ fun TileEditorDialog(
     var title by remember(initialTile) { mutableStateOf(initialTile?.title.orEmpty()) }
     var price by remember(initialTile) { mutableStateOf(initialTile?.priceInCents?.let { (it / 100.0).toString() }.orEmpty()) }
     var selectedColor by remember(initialTile) {
-        mutableStateOf(initialTile?.colorHex?.let(::Color) ?: colorOptions.first())
+        mutableStateOf(initialTile?.colorHex?.let(::colorFromStorage) ?: colorOptions.first())
     }
 
     val parsedPrice = price.replace(',', '.').toDoubleOrNull()
@@ -120,7 +121,7 @@ fun TileEditorDialog(
                         onConfirm(
                             title.trim(),
                             ((parsedPrice ?: 0.0) * 100).toLong(),
-                            selectedColor.value.toLong()
+                            selectedColor.toArgb().toLong()
                         )
                     }
                 }
@@ -146,3 +147,11 @@ private val colorOptions = listOf(
     Color(0xFF9575CD),
     Color(0xFFF06292)
 )
+
+private fun colorFromStorage(rawValue: Long): Color {
+    val packed = Color(rawValue)
+    if (packed.alpha > 0.5f) return packed
+
+    val argb = Color(rawValue.toInt())
+    return if (argb.alpha > 0.5f) argb else packed.copy(alpha = 1f)
+}
