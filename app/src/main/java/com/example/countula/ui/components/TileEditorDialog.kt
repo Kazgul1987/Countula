@@ -26,9 +26,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.example.countula.data.CounterTile
+import com.example.countula.ui.colorFromStoredArgb
+import com.example.countula.ui.toStoredArgbLong
+import androidx.compose.ui.text.input.KeyboardType
 
 @Composable
 fun TileEditorDialog(
@@ -39,7 +41,7 @@ fun TileEditorDialog(
     var title by remember(initialTile) { mutableStateOf(initialTile?.title.orEmpty()) }
     var price by remember(initialTile) { mutableStateOf(initialTile?.priceInCents?.let { (it / 100.0).toString() }.orEmpty()) }
     var selectedColor by remember(initialTile) {
-        mutableStateOf(initialTile?.colorHex?.let(::Color) ?: colorOptions.first())
+        mutableStateOf(initialTile?.colorHex?.let(::colorFromStoredArgb) ?: colorOptions.first())
     }
 
     val parsedPrice = price.replace(',', '.').toDoubleOrNull()
@@ -120,7 +122,7 @@ fun TileEditorDialog(
                         onConfirm(
                             title.trim(),
                             ((parsedPrice ?: 0.0) * 100).toLong(),
-                            selectedColor.value.toLong()
+                            selectedColor.toStoredArgbLong()
                         )
                     }
                 }
