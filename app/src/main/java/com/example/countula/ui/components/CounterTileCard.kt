@@ -35,7 +35,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.countula.data.CounterTile
 import com.example.countula.ui.CurrencyFormatter
 import com.example.countula.ui.colorFromStoredArgb
@@ -85,8 +84,7 @@ fun CounterTileCard(
                 ) {
                     Text(
                         text = titleText,
-                        style = MaterialTheme.typography.titleMedium,
-                        fontSize = 21.sp,
+                        style = MaterialTheme.typography.bodyLarge,
                         fontWeight = FontWeight.SemiBold,
                         color = contentColor,
                         maxLines = 2,
@@ -100,71 +98,10 @@ fun CounterTileCard(
                         overflow = TextOverflow.Ellipsis
                     )
                 }
-
-                Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
-                    IconButton(onClick = onEdit, modifier = Modifier.size(36.dp)) {
-                        Icon(
-                            imageVector = Icons.Default.Edit,
-                            contentDescription = "Bearbeiten",
-                            tint = contentColor
-                        )
-                    }
-                    IconButton(onClick = onDelete, modifier = Modifier.size(36.dp)) {
-                        Icon(
-                            imageVector = Icons.Default.Delete,
-                            contentDescription = "Löschen",
-                            tint = contentColor
-                        )
-                    }
-                    IconButton(
-                        onClick = { overflowExpanded = true },
-                        modifier = Modifier.size(36.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.MoreVert,
-                            contentDescription = "Mehr Aktionen",
-                            tint = contentColor
-                        )
-                    }
-
-                    DropdownMenu(
-                        expanded = overflowExpanded,
-                        onDismissRequest = { overflowExpanded = false }
-                    ) {
-                        DropdownMenuItem(
-                            text = { Text("Nach oben") },
-                            onClick = {
-                                overflowExpanded = false
-                                onMoveUp()
-                            },
-                            enabled = canMoveUp,
-                            leadingIcon = {
-                                Icon(
-                                    imageVector = Icons.Default.ArrowUpward,
-                                    contentDescription = null
-                                )
-                            }
-                        )
-                        DropdownMenuItem(
-                            text = { Text("Nach unten") },
-                            onClick = {
-                                overflowExpanded = false
-                                onMoveDown()
-                            },
-                            enabled = canMoveDown,
-                            leadingIcon = {
-                                Icon(
-                                    imageVector = Icons.Default.ArrowDownward,
-                                    contentDescription = null
-                                )
-                            }
-                        )
-                    }
-                }
             }
 
             Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -184,10 +121,74 @@ fun CounterTileCard(
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.SemiBold,
                     color = contentColor,
+                    modifier = Modifier.weight(1f),
                     textAlign = TextAlign.End,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(0.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    IconButton(onClick = onEdit, modifier = Modifier.size(30.dp)) {
+                        Icon(
+                            imageVector = Icons.Default.Edit,
+                            contentDescription = "Bearbeiten",
+                            tint = contentColor
+                        )
+                    }
+                    IconButton(onClick = onDelete, modifier = Modifier.size(30.dp)) {
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = "Löschen",
+                            tint = contentColor
+                        )
+                    }
+                    IconButton(
+                        onClick = { overflowExpanded = true },
+                        modifier = Modifier.size(30.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.MoreVert,
+                            contentDescription = "Mehr Aktionen",
+                            tint = contentColor
+                        )
+                    }
+                }
+
+                DropdownMenu(
+                    expanded = overflowExpanded,
+                    onDismissRequest = { overflowExpanded = false }
+                ) {
+                    DropdownMenuItem(
+                        text = { Text("Nach oben") },
+                        onClick = {
+                            overflowExpanded = false
+                            onMoveUp()
+                        },
+                        enabled = canMoveUp,
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.ArrowUpward,
+                                contentDescription = null
+                            )
+                        }
+                    )
+                    DropdownMenuItem(
+                        text = { Text("Nach unten") },
+                        onClick = {
+                            overflowExpanded = false
+                            onMoveDown()
+                        },
+                        enabled = canMoveDown,
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.ArrowDownward,
+                                contentDescription = null
+                            )
+                        }
+                    )
+                }
             }
         }
     }
