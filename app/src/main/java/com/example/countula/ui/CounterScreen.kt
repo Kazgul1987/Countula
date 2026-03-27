@@ -248,7 +248,7 @@ fun CounterScreen(viewModel: CounterViewModel) {
                 AlertDialog(
                     onDismissRequest = viewModel::dismissDialog,
                     title = { Text("Kachel löschen?") },
-                    text = { Text("Soll die Kachel '${dialog.tile.title}' wirklich gelöscht werden?") },
+                    text = { Text("Soll die Kachel '${dialog.tile.displayTitle()}' wirklich gelöscht werden?") },
                     confirmButton = {
                         TextButton(onClick = { viewModel.confirmDelete(dialog.tile) }) {
                             Text("Löschen")

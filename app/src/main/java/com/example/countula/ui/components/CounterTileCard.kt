@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import com.example.countula.data.CounterTile
 import com.example.countula.ui.CurrencyFormatter
 import com.example.countula.ui.colorFromStoredArgb
+import com.example.countula.ui.displayTitle
 import kotlin.math.max
 import kotlin.math.min
 
@@ -57,7 +58,7 @@ fun CounterTileCard(
 ) {
     val tileColor = colorFromStoredArgb(tile.colorHex)
     val contentColor = chooseBestContrastColor(tileColor)
-    val titleText = tile.title.ifBlank { "Kachel" }
+    val titleText = tile.displayTitle()
     val subtotal = CurrencyFormatter.formatEuroFromCents(tile.counter * tile.priceInCents)
     var overflowExpanded by remember { mutableStateOf(false) }
 
