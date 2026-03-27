@@ -37,7 +37,6 @@ import androidx.compose.ui.unit.dp
 import com.example.countula.data.CounterTile
 import com.example.countula.ui.CurrencyFormatter
 import com.example.countula.ui.colorFromStoredArgb
-import com.example.countula.ui.displayTitle
 import kotlin.math.max
 import kotlin.math.min
 
@@ -56,6 +55,8 @@ fun CounterTileBar(
 ) {
     val tileColor = colorFromStoredArgb(tile.colorHex)
     val contentColor = chooseBestContrastColor(tileColor)
+    val priceText = CurrencyFormatter.formatEuroFromCents(tile.priceInCents)
+    val subtotal = CurrencyFormatter.formatEuroFromCents(tile.counter * tile.priceInCents)
     var overflowExpanded by remember { mutableStateOf(false) }
 
     Card(
@@ -90,15 +91,15 @@ fun CounterTileBar(
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = tile.displayTitle(),
-                    style = MaterialTheme.typography.labelLarge,
+                    text = priceText,
+                    style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.SemiBold,
                     color = contentColor,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
-                    text = "Preis: ${CurrencyFormatter.formatEuroFromCents(tile.priceInCents)}",
+                    text = "Zwischensumme: $subtotal",
                     style = MaterialTheme.typography.bodyMedium,
                     color = contentColor,
                     textAlign = TextAlign.Center,
@@ -108,8 +109,8 @@ fun CounterTileBar(
                 Text(
                     text = "Counter: ${tile.counter}",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = contentColor,
                     fontWeight = FontWeight.Bold,
+                    color = contentColor,
                     textAlign = TextAlign.Center,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
