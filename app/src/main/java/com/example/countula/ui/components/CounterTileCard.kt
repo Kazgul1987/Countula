@@ -33,13 +33,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.countula.data.CounterTile
 import com.example.countula.ui.CurrencyFormatter
 import com.example.countula.ui.colorFromStoredArgb
-import com.example.countula.ui.displayTitle
 import kotlin.math.max
 import kotlin.math.min
 
@@ -58,7 +56,7 @@ fun CounterTileCard(
 ) {
     val tileColor = colorFromStoredArgb(tile.colorHex)
     val contentColor = chooseBestContrastColor(tileColor)
-    val titleText = tile.displayTitle()
+    val priceText = CurrencyFormatter.formatEuroFromCents(tile.priceInCents)
     val subtotal = CurrencyFormatter.formatEuroFromCents(tile.counter * tile.priceInCents)
     var overflowExpanded by remember { mutableStateOf(false) }
 
@@ -87,15 +85,15 @@ fun CounterTileCard(
                         .weight(1f)
                 ) {
                     Text(
-                        text = titleText,
+                        text = priceText,
                         style = MaterialTheme.typography.bodyLarge,
                         fontWeight = FontWeight.SemiBold,
                         color = contentColor,
-                        maxLines = 2,
+                        maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
                     Text(
-                        text = "Preis: ${CurrencyFormatter.formatEuroFromCents(tile.priceInCents)}",
+                        text = "Zwischensumme: $subtotal",
                         style = MaterialTheme.typography.bodySmall,
                         color = contentColor,
                         maxLines = 1,
@@ -129,17 +127,8 @@ fun CounterTileCard(
                         )
                     }
                 }
-                Text(
-                    text = subtotal,
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.SemiBold,
-                    color = contentColor,
-                    modifier = Modifier.weight(1f),
-                    textAlign = TextAlign.End,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
                 Row(
+                    modifier = Modifier.weight(1f),
                     horizontalArrangement = Arrangement.spacedBy(0.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
