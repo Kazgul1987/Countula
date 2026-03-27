@@ -12,15 +12,20 @@ import androidx.compose.foundation.layout.onSizeChanged
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.itemsIndexed as gridItemsIndexed
+import androidx.compose.foundation.lazy.itemsIndexed as listItemsIndexed
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.GridView
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.RestartAlt
+import androidx.compose.material.icons.filled.ViewAgenda
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -61,7 +66,22 @@ fun CounterScreen(viewModel: CounterViewModel) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Countula") }
+                title = { Text("Countula") },
+                actions = {
+                    IconButton(onClick = viewModel::toggleLayoutMode) {
+                        if (state.layoutMode == TileLayoutMode.GRID) {
+                            Icon(
+                                imageVector = Icons.Default.ViewAgenda,
+                                contentDescription = "Balkenansicht aktivieren"
+                            )
+                        } else {
+                            Icon(
+                                imageVector = Icons.Default.GridView,
+                                contentDescription = "Rasteransicht aktivieren"
+                            )
+                        }
+                    }
+                }
             )
         },
         floatingActionButton = {
@@ -86,90 +106,122 @@ fun CounterScreen(viewModel: CounterViewModel) {
         ) {
             TotalSumCard(totalInCents = state.totalInCents)
 
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 12.dp),
-                contentPadding = PaddingValues(8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                itemsIndexed(items = state.tiles, key = { _, item -> item.id }) { index, tile ->
-                    val isDragged = draggedIndex == index
-                    CounterTileCard(
-                        tile = tile,
-                        canMoveUp = index > 0,
-                        canMoveDown = index < state.tiles.lastIndex,
-                        onClick = { viewModel.incrementTile(tile) },
-                        onEdit = {
-                            editTile = tile
-                            isEditorOpen = true
-                        },
-                        onDelete = { viewModel.requestDelete(tile) },
-                        onDecrement = { viewModel.decrementTile(tile) },
-                        onMoveUp = { viewModel.moveTileUp(tile.id) },
-                        onMoveDown = { viewModel.moveTileDown(tile.id) },
+            when (state.layoutMode) {
+                TileLayoutMode.GRID -> {
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(2),
                         modifier = Modifier
-                            .onSizeChanged {
-                                if (it.width > 0 && it.height > 0) {
-                                    tileSize = it
-                                }
-                            }
-                            .graphicsLayer {
-                                if (isDragged) {
-                                    translationX = dragX
-                                    translationY = dragY
-                                }
-                            }
-                            .pointerInput(index, state.tiles.size, tileSize) {
-                                detectDragGesturesAfterLongPress(
-                                    onDragStart = {
-                                        draggedIndex = index
-                                        dragX = 0f
-                                        dragY = 0f
-                                    },
-                                    onDragCancel = {
-                                        draggedIndex = null
-                                        dragX = 0f
-                                        dragY = 0f
-                                    },
-                                    onDragEnd = {
-                                        draggedIndex = null
-                                        dragX = 0f
-                                        dragY = 0f
-                                    },
-                                    onDrag = { change, dragAmount ->
-                                        if (draggedIndex == null) {
-                                            draggedIndex = index
-                                        }
-                                        change.consume()
-                                        dragX += dragAmount.x
-                                        dragY += dragAmount.y
-
-                                        val activeIndex = draggedIndex ?: index
-                                        val widthPx = tileSize.width.toFloat().coerceAtLeast(1f)
-                                        val heightPx = tileSize.height.toFloat().coerceAtLeast(minTileHeightPx)
-                                        val rowDelta = (dragY / heightPx).roundToInt()
-                                        val colDelta = (dragX / widthPx).roundToInt()
-
-                                        val activeRow = activeIndex / gridColumns
-                                        val activeCol = activeIndex % gridColumns
-                                        val targetRow = (activeRow + rowDelta).coerceAtLeast(0)
-                                        val targetCol = (activeCol + colDelta).coerceIn(0, gridColumns - 1)
-                                        val targetIndex = (targetRow * gridColumns + targetCol)
-                                            .coerceIn(0, state.tiles.lastIndex)
-
-                                        if (targetIndex != activeIndex) {
-                                            viewModel.moveTile(activeIndex, targetIndex)
-                                            draggedIndex = targetIndex
-                                            dragX = 0f
-                                            dragY = 0f
+                            .fillMaxSize()
+                            .padding(horizontal = 12.dp),
+                        contentPadding = PaddingValues(8.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        gridItemsIndexed(items = state.tiles, key = { _, item -> item.id }) { index, tile ->
+                            val isDragged = draggedIndex == index
+                            CounterTileCard(
+                                tile = tile,
+                                canMoveUp = index > 0,
+                                canMoveDown = index < state.tiles.lastIndex,
+                                onClick = { viewModel.incrementTile(tile) },
+                                onEdit = {
+                                    editTile = tile
+                                    isEditorOpen = true
+                                },
+                                onDelete = { viewModel.requestDelete(tile) },
+                                onDecrement = { viewModel.decrementTile(tile) },
+                                onMoveUp = { viewModel.moveTileUp(tile.id) },
+                                onMoveDown = { viewModel.moveTileDown(tile.id) },
+                                modifier = Modifier
+                                    .onSizeChanged {
+                                        if (it.width > 0 && it.height > 0) {
+                                            tileSize = it
                                         }
                                     }
-                                )
-                            }
-                    )
+                                    .graphicsLayer {
+                                        if (isDragged) {
+                                            translationX = dragX
+                                            translationY = dragY
+                                        }
+                                    }
+                                    .pointerInput(index, state.tiles.size, tileSize) {
+                                        detectDragGesturesAfterLongPress(
+                                            onDragStart = {
+                                                draggedIndex = index
+                                                dragX = 0f
+                                                dragY = 0f
+                                            },
+                                            onDragCancel = {
+                                                draggedIndex = null
+                                                dragX = 0f
+                                                dragY = 0f
+                                            },
+                                            onDragEnd = {
+                                                draggedIndex = null
+                                                dragX = 0f
+                                                dragY = 0f
+                                            },
+                                            onDrag = { change, dragAmount ->
+                                                if (draggedIndex == null) {
+                                                    draggedIndex = index
+                                                }
+                                                change.consume()
+                                                dragX += dragAmount.x
+                                                dragY += dragAmount.y
+
+                                                val activeIndex = draggedIndex ?: index
+                                                val widthPx = tileSize.width.toFloat().coerceAtLeast(1f)
+                                                val heightPx = tileSize.height.toFloat().coerceAtLeast(minTileHeightPx)
+                                                val rowDelta = (dragY / heightPx).roundToInt()
+                                                val colDelta = (dragX / widthPx).roundToInt()
+
+                                                val activeRow = activeIndex / gridColumns
+                                                val activeCol = activeIndex % gridColumns
+                                                val targetRow = (activeRow + rowDelta).coerceAtLeast(0)
+                                                val targetCol = (activeCol + colDelta).coerceIn(0, gridColumns - 1)
+                                                val targetIndex = (targetRow * gridColumns + targetCol)
+                                                    .coerceIn(0, state.tiles.lastIndex)
+
+                                                if (targetIndex != activeIndex) {
+                                                    viewModel.moveTile(activeIndex, targetIndex)
+                                                    draggedIndex = targetIndex
+                                                    dragX = 0f
+                                                    dragY = 0f
+                                                }
+                                            }
+                                        )
+                                    }
+                            )
+                        }
+                    }
+                }
+
+                TileLayoutMode.BAR -> {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(horizontal = 12.dp),
+                        contentPadding = PaddingValues(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        listItemsIndexed(items = state.tiles, key = { _, item -> item.id }) { index, tile ->
+                            CounterTileCard(
+                                tile = tile,
+                                canMoveUp = index > 0,
+                                canMoveDown = index < state.tiles.lastIndex,
+                                onClick = { viewModel.incrementTile(tile) },
+                                onEdit = {
+                                    editTile = tile
+                                    isEditorOpen = true
+                                },
+                                onDelete = { viewModel.requestDelete(tile) },
+                                onDecrement = { viewModel.decrementTile(tile) },
+                                onMoveUp = { viewModel.moveTileUp(tile.id) },
+                                onMoveDown = { viewModel.moveTileDown(tile.id) },
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
+                    }
                 }
             }
         }

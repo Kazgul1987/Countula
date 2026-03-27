@@ -12,16 +12,20 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class CounterViewModel(
-    private val repository: CounterRepository
+    private val repository: CounterRepository,
+    initialLayoutMode: TileLayoutMode = TileLayoutMode.GRID,
+    private val onLayoutModeChanged: (TileLayoutMode) -> Unit = {}
 ) : ViewModel() {
 
     private val dialogState = MutableStateFlow<DialogState>(DialogState.None)
+    private val layoutMode = MutableStateFlow(initialLayoutMode)
 
-    val uiState: StateFlow<CounterUiState> = combine(repository.tiles, dialogState) { tiles, dialog ->
+    val uiState: StateFlow<CounterUiState> = combine(repository.tiles, dialogState, layoutMode) { tiles, dialog, mode ->
         CounterUiState(
             tiles = tiles,
             totalInCents = tiles.sumOf { it.priceInCents * it.counter },
-            dialogState = dialog
+            dialogState = dialog,
+            layoutMode = mode
         )
     }.stateIn(
         scope = viewModelScope,
@@ -79,6 +83,19 @@ class CounterViewModel(
         dialogState.value = DialogState.None
     }
 
+    fun setLayoutMode(mode: TileLayoutMode) {
+        layoutMode.value = mode
+        onLayoutModeChanged(mode)
+    }
+
+    fun toggleLayoutMode() {
+        val nextMode = when (layoutMode.value) {
+            TileLayoutMode.GRID -> TileLayoutMode.BAR
+            TileLayoutMode.BAR -> TileLayoutMode.GRID
+        }
+        setLayoutMode(nextMode)
+    }
+
     fun moveTileUp(tileId: Long) {
         moveTile(tileId, direction = -1)
     }
@@ -130,8 +147,14 @@ sealed interface DialogState {
     data class ConfirmDelete(val tile: CounterTile) : DialogState
 }
 
+enum class TileLayoutMode {
+    GRID,
+    BAR
+}
+
 data class CounterUiState(
     val tiles: List<CounterTile> = emptyList(),
     val totalInCents: Long = 0,
-    val dialogState: DialogState = DialogState.None
+    val dialogState: DialogState = DialogState.None,
+    val layoutMode: TileLayoutMode = TileLayoutMode.GRID
 )
