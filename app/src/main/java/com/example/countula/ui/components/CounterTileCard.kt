@@ -93,7 +93,7 @@ fun CounterTileCard(
                         overflow = TextOverflow.Ellipsis
                     )
                     Text(
-                        text = "Zwischensumme: $subtotal",
+                        text = subtotal,
                         style = MaterialTheme.typography.bodySmall,
                         color = contentColor,
                         maxLines = 1,

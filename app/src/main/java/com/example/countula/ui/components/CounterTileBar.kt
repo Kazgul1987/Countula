@@ -99,7 +99,7 @@ fun CounterTileBar(
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
-                    text = "Zwischensumme: $subtotal",
+                    text = subtotal,
                     style = MaterialTheme.typography.bodyMedium,
                     color = contentColor,
                     textAlign = TextAlign.Center,
