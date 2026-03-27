@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.countula.data.CounterTile
+import com.example.countula.ui.components.CounterTileBar
 import com.example.countula.ui.components.CounterTileCard
 import com.example.countula.ui.components.TileEditorDialog
 import kotlin.math.roundToInt
@@ -205,11 +206,11 @@ fun CounterScreen(viewModel: CounterViewModel) {
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         listItemsIndexed(items = state.tiles, key = { _, item -> item.id }) { index, tile ->
-                            CounterTileCard(
+                            CounterTileBar(
                                 tile = tile,
                                 canMoveUp = index > 0,
                                 canMoveDown = index < state.tiles.lastIndex,
-                                onClick = { viewModel.incrementTile(tile) },
+                                onIncrement = { viewModel.incrementTile(tile) },
                                 onEdit = {
                                     editTile = tile
                                     isEditorOpen = true
