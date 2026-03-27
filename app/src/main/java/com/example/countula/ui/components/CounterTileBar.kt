@@ -72,16 +72,16 @@ fun CounterTileBar(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(contentColor.copy(alpha = 0.08f))
-                .padding(horizontal = 8.dp, vertical = 8.dp),
+                .padding(horizontal = 6.dp, vertical = 4.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(6.dp)
         ) {
-            IconButton(onClick = onDecrement, modifier = Modifier.size(56.dp)) {
+            IconButton(onClick = onDecrement, modifier = Modifier.size(36.dp)) {
                 Icon(
                     imageVector = Icons.Default.Remove,
                     contentDescription = "Counter verringern",
                     tint = contentColor,
-                    modifier = Modifier.size(34.dp)
+                    modifier = Modifier.size(20.dp)
                 )
             }
 
@@ -92,7 +92,7 @@ fun CounterTileBar(
             ) {
                 Text(
                     text = priceText,
-                    style = MaterialTheme.typography.bodyLarge,
+                    style = MaterialTheme.typography.labelMedium,
                     fontWeight = FontWeight.SemiBold,
                     color = contentColor,
                     maxLines = 1,
@@ -100,7 +100,7 @@ fun CounterTileBar(
                 )
                 Text(
                     text = subtotal,
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = MaterialTheme.typography.labelSmall,
                     color = contentColor,
                     textAlign = TextAlign.Center,
                     maxLines = 1,
@@ -108,7 +108,7 @@ fun CounterTileBar(
                 )
                 Text(
                     text = "Counter: ${tile.counter}",
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = MaterialTheme.typography.labelSmall,
                     fontWeight = FontWeight.Bold,
                     color = contentColor,
                     textAlign = TextAlign.Center,
@@ -117,18 +117,18 @@ fun CounterTileBar(
                 )
             }
 
-            IconButton(onClick = onIncrement, modifier = Modifier.size(56.dp)) {
+            IconButton(onClick = onIncrement, modifier = Modifier.size(36.dp)) {
                 Icon(
                     imageVector = Icons.Default.Add,
                     contentDescription = "Counter erhöhen",
                     tint = contentColor,
-                    modifier = Modifier.size(34.dp)
+                    modifier = Modifier.size(20.dp)
                 )
             }
 
             IconButton(
                 onClick = { overflowExpanded = true },
-                modifier = Modifier.size(28.dp)
+                modifier = Modifier.size(24.dp)
             ) {
                 Icon(
                     imageVector = Icons.Default.MoreVert,

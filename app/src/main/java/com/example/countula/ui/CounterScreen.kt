@@ -201,9 +201,9 @@ fun CounterScreen(viewModel: CounterViewModel) {
                     LazyColumn(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(horizontal = 12.dp),
-                        contentPadding = PaddingValues(8.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                            .padding(horizontal = 8.dp),
+                        contentPadding = PaddingValues(vertical = 4.dp),
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
                         listItemsIndexed(items = state.tiles, key = { _, item -> item.id }) { index, tile ->
                             CounterTileBar(
