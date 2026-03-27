@@ -13,6 +13,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDownward
 import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Card
@@ -49,8 +50,10 @@ fun CounterTileCard(
     onClick: () -> Unit,
     onEdit: () -> Unit,
     onDelete: () -> Unit,
+    onDecrement: () -> Unit,
     onMoveUp: () -> Unit,
-    onMoveDown: () -> Unit
+    onMoveDown: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val tileColor = colorFromStoredArgb(tile.colorHex)
     val contentColor = chooseBestContrastColor(tileColor)
@@ -59,9 +62,9 @@ fun CounterTileCard(
     var overflowExpanded by remember { mutableStateOf(false) }
 
     Card(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
-            .aspectRatio(1f)
+            .aspectRatio(1.6f)
             .clickable(onClick = onClick),
         colors = CardDefaults.cardColors(
             containerColor = tileColor,
@@ -108,14 +111,23 @@ fun CounterTileCard(
                     .background(contentColor.copy(alpha = 0.10f))
                     .padding(horizontal = 8.dp, vertical = 6.dp)
             ) {
-                Text(
-                    text = "Counter: ${tile.counter}",
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.SemiBold,
-                    color = contentColor,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
+                Column(horizontalAlignment = Alignment.Start) {
+                    Text(
+                        text = "Counter: ${tile.counter}",
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        color = contentColor,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    IconButton(onClick = onDecrement, modifier = Modifier.size(24.dp)) {
+                        Icon(
+                            imageVector = Icons.Default.KeyboardArrowDown,
+                            contentDescription = "Counter verringern",
+                            tint = contentColor
+                        )
+                    }
+                }
                 Text(
                     text = subtotal,
                     style = MaterialTheme.typography.bodyMedium,

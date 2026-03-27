@@ -87,6 +87,26 @@ class CounterViewModel(
         moveTile(tileId, direction = 1)
     }
 
+    fun moveTile(fromIndex: Int, toIndex: Int) {
+        viewModelScope.launch {
+            val current = uiState.value.tiles
+            if (fromIndex !in current.indices || toIndex !in current.indices || fromIndex == toIndex) {
+                return@launch
+            }
+
+            val mutable = current.toMutableList()
+            val moved = mutable.removeAt(fromIndex)
+            mutable.add(toIndex, moved)
+            repository.reorderTiles(mutable)
+        }
+    }
+
+    fun decrementTile(tile: CounterTile) {
+        viewModelScope.launch {
+            repository.decrementTile(tile)
+        }
+    }
+
     private fun moveTile(tileId: Long, direction: Int) {
         viewModelScope.launch {
             val current = uiState.value.tiles

@@ -35,6 +35,11 @@ class CounterRepository(
         dao.update(tile.copy(counter = tile.counter + 1).toEntity())
     }
 
+    suspend fun decrementTile(tile: CounterTile) {
+        val nextCounter = (tile.counter - 1).coerceAtLeast(0)
+        dao.update(tile.copy(counter = nextCounter).toEntity())
+    }
+
     suspend fun resetAllCounters() {
         dao.resetAllCounters()
     }
