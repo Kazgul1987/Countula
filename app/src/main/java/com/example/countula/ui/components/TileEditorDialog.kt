@@ -45,7 +45,6 @@ fun TileEditorDialog(
     }
 
     val parsedPrice = price.replace(',', '.').toDoubleOrNull()
-    val nameError = title.isBlank()
     val priceError = parsedPrice == null || parsedPrice <= 0.0
 
     AlertDialog(
@@ -58,18 +57,10 @@ fun TileEditorDialog(
                 OutlinedTextField(
                     value = title,
                     onValueChange = { title = it },
-                    label = { Text("Titel") },
-                    isError = nameError,
+                    label = { Text("Titel (optional)") },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
                 )
-                if (nameError) {
-                    Text(
-                        text = "Name darf nicht leer sein.",
-                        color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.labelSmall
-                    )
-                }
 
                 Spacer(modifier = Modifier.height(8.dp))
 
@@ -118,7 +109,7 @@ fun TileEditorDialog(
         confirmButton = {
             TextButton(
                 onClick = {
-                    if (!nameError && !priceError) {
+                    if (!priceError) {
                         onConfirm(
                             title.trim(),
                             ((parsedPrice ?: 0.0) * 100).toLong(),

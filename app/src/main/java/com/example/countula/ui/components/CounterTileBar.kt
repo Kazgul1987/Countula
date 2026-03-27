@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import com.example.countula.data.CounterTile
 import com.example.countula.ui.CurrencyFormatter
 import com.example.countula.ui.colorFromStoredArgb
+import com.example.countula.ui.displayTitle
 import kotlin.math.max
 import kotlin.math.min
 
@@ -89,7 +90,7 @@ fun CounterTileBar(
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = tile.title.ifBlank { "Kachel" },
+                    text = tile.displayTitle(),
                     style = MaterialTheme.typography.labelLarge,
                     fontWeight = FontWeight.SemiBold,
                     color = contentColor,
