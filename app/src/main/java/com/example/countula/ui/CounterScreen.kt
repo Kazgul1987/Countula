@@ -1,5 +1,7 @@
 package com.example.countula.ui
 
+import android.view.HapticFeedbackConstants
+import android.view.SoundEffectConstants
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -38,9 +40,11 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
@@ -49,6 +53,7 @@ import com.example.countula.data.CounterTile
 import com.example.countula.ui.components.CounterTileBar
 import com.example.countula.ui.components.CounterTileCard
 import com.example.countula.ui.components.TileEditorDialog
+import androidx.compose.ui.platform.LocalHapticFeedback
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -63,6 +68,15 @@ fun CounterScreen(viewModel: CounterViewModel) {
     var tileSize by remember { mutableStateOf(IntSize.Zero) }
     val gridColumns = 2
     val minTileHeightPx = with(LocalDensity.current) { 80.dp.toPx() }
+    val hapticFeedback = LocalHapticFeedback.current
+    val view = LocalView.current
+
+    fun incrementTileWithFeedback(tile: CounterTile) {
+        view.performHapticFeedback(HapticFeedbackConstants.CLOCK_TICK)
+        hapticFeedback.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+        view.playSoundEffect(SoundEffectConstants.CLICK)
+        viewModel.incrementTile(tile)
+    }
 
     Scaffold(
         topBar = {
@@ -124,7 +138,7 @@ fun CounterScreen(viewModel: CounterViewModel) {
                                 tile = tile,
                                 canMoveUp = index > 0,
                                 canMoveDown = index < state.tiles.lastIndex,
-                                onClick = { viewModel.incrementTile(tile) },
+                                onClick = { incrementTileWithFeedback(tile) },
                                 onEdit = {
                                     editTile = tile
                                     isEditorOpen = true
@@ -210,7 +224,7 @@ fun CounterScreen(viewModel: CounterViewModel) {
                                 tile = tile,
                                 canMoveUp = index > 0,
                                 canMoveDown = index < state.tiles.lastIndex,
-                                onIncrement = { viewModel.incrementTile(tile) },
+                                onIncrement = { incrementTileWithFeedback(tile) },
                                 onEdit = {
                                     editTile = tile
                                     isEditorOpen = true
